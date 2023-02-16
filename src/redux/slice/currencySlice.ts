@@ -13,7 +13,7 @@ type ActiveItem = {
   activeCur: string;
 };
 enum Status {
-  LOADING = "pending",ß
+  LOADING = "pending",
   SUCCESS = "success",
   ERROR = "rejected"
 }
