@@ -4,21 +4,21 @@ import axios from 'axios';
 type CurrencyItem = {
   ccy: string;
   base_ccy: string;
-  buy: string;
-  sale: string;
+  buy: number;
+  sale: number;
 };
 type ActiveItem = {
-  rate: string;
-  value: string;
+  rate: number;
+  value: number;
   activeCur: string;
 };
 enum Status {
-  LOADING = "pending",
-  SUCCESS = "success",
-  ERROR = "rejected"
+  LOADING = 'pending',
+  SUCCESS = 'success',
+  ERROR = 'rejected',
 }
 interface CurrencySliceState {
-  status: Status
+  status: Status;
   items: CurrencyItem[];
   get: ActiveItem;
   change: ActiveItem;
@@ -47,16 +47,15 @@ export const fetchCurrentCur = createAsyncThunk('currency/fetchByCurrency', asyn
 const initialState: CurrencySliceState = {
   status: Status.LOADING,
   items: [],
-
   change: {
-    rate: "1",
+    rate: 1,
     activeCur: 'USD',
-    value: '',
+    value: 0,
   },
   get: {
-    rate: "1",
+    rate: 1,
     activeCur: 'UAH',
-    value: '',
+    value: 0,
   },
 };
 
@@ -64,10 +63,24 @@ export const currencySlice = createSlice({
   name: 'currency',
   initialState,
   reducers: {
+    setNewRateForBuy(state, action){
+        for (let i = 0; i < state.items.length; i++) {
+          if (state.items[i].ccy === action.payload.cur) {
+            state.items[i].buy = action.payload.valueBuy;
+          }
+        }
+    },
+    setNewRateForSale(state, action){
+      for (let i = 0; i < state.items.length; i++) {
+        if (state.items[i].ccy === action.payload.cur) {
+          state.items[i].sale = action.payload.valueSale;
+        }
+      }
+  },
     setChangeCurrency(state, action: PayloadAction<string>) {
       state.change.activeCur = action.payload;
       if (state.change.activeCur === 'UAH') {
-        state.change.rate = "1";
+        state.change.rate = 1;
       } else {
         const findItem: CurrencyItem | undefined = state.items.find(
           (cur) => cur.ccy === state.change.activeCur,
@@ -76,12 +89,11 @@ export const currencySlice = createSlice({
           state.change.rate = findItem.sale;
         }
       }
-      onChangeFrom(state.change.value)
     },
     setGetCurrency(state, action: PayloadAction<string>) {
       state.get.activeCur = action.payload;
       if (state.get.activeCur === 'UAH') {
-        state.get.rate = "1";
+        state.get.rate = 1;
       } else {
         const findItem: CurrencyItem | undefined = state.items.find(
           (cur) => cur.ccy === state.get.activeCur,
@@ -91,33 +103,37 @@ export const currencySlice = createSlice({
         }
       }
     },
-    onChangeFrom(state, action: PayloadAction<string>) {
+    onChangeFrom(state, action: PayloadAction<number>) {
       state.change.value = action.payload;
-      let calculate: Number
-
-      calculate = (Number(state.change.value) / Number(state.get.rate)) * Number(state.change.rate);
-
-      state.get.value = calculate.toString()
-    },
-    onChangeTo(state, action: PayloadAction<string>) {
-      state.get.value = action.payload;
       let calculate: number;
-      calculate = (Number(state.get.value) / Number(state.change.rate)) * Number(state.get.rate);
-
-      state.change.value = calculate.toString();
+      if (state.change.activeCur === state.get.activeCur) {
+        state.get.value = state.change.value;
+      } else {
+        calculate = (state.change.value / state.get.rate) * state.change.rate;
+        state.get.value = calculate;
+      }
     },
     swapValues(state) {
-      [state.get, state.change] = [state.change, state.get];
+      [ state.change.activeCur, 
+        state.get.activeCur, 
+        state.change.rate, 
+        state.get.rate
+      ] = [
+        state.get.activeCur,
+        state.change.activeCur,
+        state.get.rate,
+        state.change.rate,
+      ];
     },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchCurrentCur.fulfilled, (state, action) => {
       state.items = action.payload;
-      const from: CurrencyItem | undefined = action.payload.find(
+      const findItem: CurrencyItem | undefined = action.payload.find(
         (cur: CurrencyItem) => cur.ccy === state.change.activeCur,
       );
-      if (from) {
-        state.change.rate = from.buy;
+      if (findItem) {
+        state.change.rate = findItem.sale;
         state.status = Status.SUCCESS;
       }
     });
@@ -132,7 +148,7 @@ export const currencySlice = createSlice({
   },
 });
 
-export const { setGetCurrency, setChangeCurrency, onChangeTo, onChangeFrom, swapValues } =
+export const { setGetCurrency, setChangeCurrency, onChangeFrom, swapValues, setNewRateForBuy, setNewRateForSale } =
   currencySlice.actions;
 
 export default currencySlice.reducer;

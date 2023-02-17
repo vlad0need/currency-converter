@@ -2,22 +2,20 @@ import React from 'react';
 import InputField from './InputField';
 import { Box, IconButton } from '@mui/material';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
-import { setGetCurrency, setChangeCurrency, onChangeFrom, onChangeTo, swapValues } from '../redux/slice/currencySlice';
+import { setGetCurrency, setChangeCurrency, onChangeFrom, swapValues } from '../redux/slice/currencySlice';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 
 const Converter: React.FC = () => {
     const {get, change} = useAppSelector(state => state.currency)
     const dispatch = useAppDispatch()
-    
-    // const setFromCurrency = ({value, currency}: {value: string, currency: string}) => {
-    //   dispatch(setChangeCurrency(currency))
-    //   dispatch(onChangeFrom(value))
-    // }
+    React.useEffect(() => {
+      dispatch(onChangeFrom(change.value))
+    }, [get.activeCur, change.activeCur, dispatch])
 
   return (
-    <Box sx={{ mt: '50px' }}>
+    <Box sx={{ mt: '50px', ml: "10px" }}>
       <InputField label={"Change"} 
-      onChange={(value: string) => dispatch(onChangeFrom(value))} 
+      onChange={(value: number) => dispatch(onChangeFrom(value))} 
       activeCur={(value: string) => dispatch(setChangeCurrency(value))}
       cur={change.activeCur}
       value={change.value} 
@@ -26,7 +24,7 @@ const Converter: React.FC = () => {
         <SwapHorizIcon />
       </IconButton>
       <InputField label={"Get"} 
-      onChange={(value: string) => dispatch(onChangeTo(value))}
+      onChange={(value: number) => dispatch(onChangeFrom(value))}
       activeCur={(value: string) => dispatch(setGetCurrency(value))}
       cur={get.activeCur} 
       value={get.value} 

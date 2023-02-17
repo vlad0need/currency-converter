@@ -3,25 +3,25 @@ import { TextField, MenuItem, FormControl, Select, InputLabel } from '@mui/mater
 
 type InputFieldProps = {
   activeCur: (value: string) => void;
-  onChange: (starg0: string) => void;
+  onChange: (starg0: number) => void;
   cur: string;
-  value: string;
+  value: number;
   label: string;
 }
 
 function InputField({activeCur, cur, onChange, value, label}: InputFieldProps) {
   
-
   return (
     <>
       <TextField
         id="outlined-number"
         type="number"
-        value={value && value}
+        value={value !== 0 && Number(value.toFixed(3))}
         placeholder="0"
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => onChange(Number(e.target.value))}
         label={label}
         sx={{backgroundColor: "#fff"}}
+        disabled={label ==="Get"}
       />
       
       <FormControl size='medium'>
