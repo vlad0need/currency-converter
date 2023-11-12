@@ -10,7 +10,6 @@ import { useAppSelector, useAppDispatch } from '../redux/store';
 import { setNewRateForBuy, setNewRateForSale, setChangeCurrency, setGetCurrency } from '../redux/slice/currencySlice';
 import { IconButton, TextField, Tooltip } from '@mui/material';
 import DoneIcon from '@mui/icons-material/Done';
-import { padding } from '@mui/system';
 
 const TableCurrencies: React.FC = () => {
   const rate = useAppSelector((state) => state.currency.items);
@@ -25,7 +24,7 @@ const TableCurrencies: React.FC = () => {
   React.useEffect(() => {
     dispatch(setChangeCurrency(change.activeCur))
     dispatch(setGetCurrency(get.activeCur))
-  }, [rate])
+  }, [rate, change.activeCur])
 
   const setNewBuy = ({ valueBuy, i, cur }: any) => {
     setChangeBuy([false, false])

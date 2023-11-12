@@ -10,7 +10,7 @@ const Converter: React.FC = () => {
     const dispatch = useAppDispatch()
     React.useEffect(() => {
       dispatch(onChangeFrom(change.value))
-    }, [get.activeCur, change.activeCur, dispatch])
+    }, [get.activeCur, change.activeCur, dispatch, change.value])
 
   return (
     <Box sx={{ mt: '50px', ml: "10px" }}>
