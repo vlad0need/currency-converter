@@ -36,7 +36,8 @@ export const fetchCurrentCur = createAsyncThunk('currency/fetchByCurrency', asyn
     throw new Error('Server error');
   }
   // Make a successful request
-  const response = await axios.get('http://localhost:3001/exchange-rates');
+  const response = await axios.get('https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5',{
+  });
 
   if (counter !== 5) {
     localStorage.setItem('counter', counter.toString());
