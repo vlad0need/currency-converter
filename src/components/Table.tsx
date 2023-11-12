@@ -24,7 +24,7 @@ const TableCurrencies: React.FC = () => {
   React.useEffect(() => {
     dispatch(setChangeCurrency(change.activeCur))
     dispatch(setGetCurrency(get.activeCur))
-  }, [rate, change.activeCur])
+  }, [rate, change.activeCur, dispatch, get.activeCur])
 
   const setNewBuy = ({ valueBuy, i, cur }: any) => {
     setChangeBuy([false, false])
